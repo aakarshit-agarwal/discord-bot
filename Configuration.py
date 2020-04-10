@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 class Configuration:
     def __init__(self):
         load_dotenv()
-        self.__DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-        self.__GOOGLE_SEARCH_API_KEY = os.getenv("GOOGLE_SEARCH_API_KEY")
-        self.__GOOGLE_SEARCH_ENGINE_ID = os.getenv("GOOGLE_SEARCH_ENGINE_ID")
+        self.__DISCORD_BOT_TOKEN = os.environ['DISCORD_BOT_TOKEN'] or os.getenv("DISCORD_BOT_TOKEN")
+        self.__GOOGLE_SEARCH_API_KEY = os.environ['GOOGLE_SEARCH_API_KEY'] or os.getenv("GOOGLE_SEARCH_API_KEY")
+        self.__GOOGLE_SEARCH_ENGINE_ID = os.environ['GOOGLE_SEARCH_ENGINE_ID'] or os.getenv("GOOGLE_SEARCH_ENGINE_ID")
         self.__DATABASE_URL = os.environ['DATABASE_URL'] or os.getenv("DATABASE_URL")
-        self.__LOGGING_LEVEL = os.getenv("LOGGING_LEVEL")
+        self.__LOGGING_LEVEL = os.environ['LOGGING_LEVEL'] or os.getenv("LOGGING_LEVEL")
 
     def getBotToken(self):
         return self.__DISCORD_BOT_TOKEN
