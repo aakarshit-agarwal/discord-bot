@@ -1,4 +1,5 @@
 import os
+import urllib.parse as urlparse
 from dotenv import load_dotenv
 
 
@@ -8,11 +9,7 @@ class Configuration:
         self.__DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
         self.__GOOGLE_SEARCH_API_KEY = os.getenv("GOOGLE_SEARCH_API_KEY")
         self.__GOOGLE_SEARCH_ENGINE_ID = os.getenv("GOOGLE_SEARCH_ENGINE_ID")
-        self.__DATABASE_USER = os.getenv("DATABASE_USER")
-        self.__DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-        self.__DATABASE_HOST = os.getenv("DATABASE_HOST")
-        self.__DATABASE_NAME = os.getenv("DATABASE_NAME")
-        self.__DATABASE_PORT = os.getenv("DATABASE_PORT")
+        self.__DATABASE_URL = os.environ['DATABASE_URL'] or os.getenv("DATABASE_URL")
         self.__LOGGING_LEVEL = os.getenv("LOGGING_LEVEL")
 
     def getBotToken(self):
@@ -25,12 +22,18 @@ class Configuration:
         }
 
     def getDatabaseConfig(self):
+        url = urlparse.urlparse(self.__DATABASE_URL)
+        dbname = url.path[1:]
+        user = url.username
+        password = url.password
+        host = url.hostname
+        port = url.port
         return {
-            "USER" : self.__DATABASE_USER,
-            "PASSWORD" : self.__DATABASE_PASSWORD,
-            "HOST" : self.__DATABASE_HOST,
-            "NAME" : self.__DATABASE_NAME,
-            "PORT" : self.__DATABASE_PORT
+            "USER" : user,
+            "PASSWORD" : password,
+            "HOST" : host,
+            "NAME" : dbname,
+            "PORT" : port
         }
     
     def getLoggingLevel(self):
