@@ -3,14 +3,14 @@ import pprint
 
 class Google:
     def __init__(self, searchApiKey, searchEngineId):
-        self.searchApiKey = searchApiKey
-        self.searchEngineId = searchEngineId
+        self.__searchApiKey = searchApiKey
+        self.__searchEngineId = searchEngineId
 
     def search(self, query):
         print("Search query:", query)
-        service = build("customsearch", "v1", developerKey=self.searchApiKey)
+        service = build("customsearch", "v1", developerKey=self.__searchApiKey)
 
-        result = service.cse().list(q=query, cx=self.searchEngineId).execute()
+        result = service.cse().list(q=query, cx=self.__searchEngineId).execute()
         # print("Query Result:", result)
 
         top_result = []

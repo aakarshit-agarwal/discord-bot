@@ -4,8 +4,11 @@ import Google
 import Database
 
 config = Configuration.Configuration()
-google = Google.Google(config.getGoogleSearchApiKey(), config.getGoogleSearchEngineId())
-db = Database.SQL()
+
+googleConfig = config.getGoogleConfig()
+google = Google.Google(googleConfig["API_KEY"], googleConfig["ENGINE_ID"])
+
+db = Database.SQL(config.getDatabaseConfig())
 
 class MyClient(discord.Client):
     async def on_ready(self):
