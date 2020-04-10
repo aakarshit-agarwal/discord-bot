@@ -1,12 +1,16 @@
+import Configuration
 import psycopg2
 
+config = Configuration.Configuration()
+
 class SQL:
-    def __init__(self, config):
-        self.__USERNAME = config["USER"]
-        self.__PASSWORD = config["PASSWORD"]
-        self.__HOST = config["HOST"]
-        self.__PORT = "5432"
-        self.__DATABASE_NAME = config["NAME"]
+    def __init__(self):
+        dbConfig = config.getDatabaseConfig()
+        self.__USERNAME = dbConfig["USER"]
+        self.__PASSWORD = dbConfig["PASSWORD"]
+        self.__HOST = dbConfig["HOST"]
+        self.__PORT = dbConfig["PORT"]
+        self.__DATABASE_NAME = dbConfig["NAME"]
 
     def createDatabaseConnection(self):
         print("Creating Database Connection")

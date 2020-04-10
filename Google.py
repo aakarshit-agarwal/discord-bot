@@ -1,10 +1,13 @@
+import Configuration
 from googleapiclient.discovery import build
-import pprint
+
+config = Configuration.Configuration()
 
 class Google:
-    def __init__(self, searchApiKey, searchEngineId):
-        self.__searchApiKey = searchApiKey
-        self.__searchEngineId = searchEngineId
+    def __init__(self):
+        googleConfig = config.getGoogleConfig()
+        self.__searchApiKey = googleConfig["API_KEY"]
+        self.__searchEngineId = googleConfig["ENGINE_ID"]
 
     def search(self, query):
         print("Search query:", query)

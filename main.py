@@ -5,10 +5,9 @@ import Database
 
 config = Configuration.Configuration()
 
-googleConfig = config.getGoogleConfig()
-google = Google.Google(googleConfig["API_KEY"], googleConfig["ENGINE_ID"])
+google = Google.Google()
 
-db = Database.SQL(config.getDatabaseConfig())
+db = Database.SQL()
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -37,10 +36,14 @@ class MyClient(discord.Client):
 
         elif message.content.startswith("!recent"):
             query = message.content.split(" ", 1)
-            response = "Empty query!"
+            response = ""
             if(len(query) >= 2):
-                response = '\n'.join(db.getData(message.author.name, query[1]))
-            await message.channel.send("\nRecent Quries:\n" + response)
+                recentResult = db.getData(message.author.name, query[1])
+                for i, each in enumerate(recentResult):
+                    response += "\n" + str(i + 1) + '. ' + each
+            else:
+                response = "Empty query!"
+            await message.channel.send("\nRecent Quries:" + response)
 
 client = MyClient()
 print("\nBot Started")

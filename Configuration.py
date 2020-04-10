@@ -12,6 +12,7 @@ class Configuration:
         self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
         self.DATABASE_HOST = os.getenv("DATABASE_HOST")
         self.DATABASE_NAME = os.getenv("DATABASE_NAME")
+        self.DATABASE_PORT = os.getenv("DATABASE_PORT")
 
     def getBotToken(self):
         return self.DISCORD_BOT_TOKEN
@@ -28,4 +29,5 @@ class Configuration:
             "PASSWORD" : self.DATABASE_PASSWORD,
             "HOST" : self.DATABASE_HOST,
             "NAME" : self.DATABASE_NAME,
+            "PORT" : self.DATABASE_PORT
         }
