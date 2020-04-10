@@ -1,7 +1,9 @@
 import Configuration
+import logging
 from googleapiclient.discovery import build
 
 config = Configuration.Configuration()
+logger = logging.getLogger()
 
 class Google:
     def __init__(self):
@@ -10,16 +12,15 @@ class Google:
         self.__searchEngineId = googleConfig["ENGINE_ID"]
 
     def search(self, query):
-        print("Search query:", query)
+        logger.debug("Search query: %s", query)
         service = build("customsearch", "v1", developerKey=self.__searchApiKey)
 
         result = service.cse().list(q=query, cx=self.__searchEngineId).execute()
-        # print("Query Result:", result)
+        logger.debug("Query Result:%s ", result)
 
         top_result = []
         if "items" in result.keys():
             for each in result["items"]:
-                # print(each)
                 top_result.append({
                     "title": each["title"],
                     "link": each["link"]

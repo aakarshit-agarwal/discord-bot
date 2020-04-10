@@ -1,7 +1,9 @@
 import Configuration
 import psycopg2
+import logging
 
 config = Configuration.Configuration()
+logger = logging.getLogger()
 
 class SQL:
     def __init__(self):
@@ -13,43 +15,44 @@ class SQL:
         self.__DATABASE_NAME = dbConfig["NAME"]
 
     def createDatabaseConnection(self):
-        print("Creating Database Connection")
+        logger.debug("Creating Database Connection")
         try:
-            self.connection = psycopg2.connect(
+            self.__connection = psycopg2.connect(
                 user = self.__USERNAME,
                 password = self.__PASSWORD,
                 host = self.__HOST,
                 port = self.__PORT,
                 database = self.__DATABASE_NAME
             )
-            self.cursor = self.connection.cursor()
-            print ( self.connection.get_dsn_parameters(),"\n")
-        except (Exception, psycopg2.Error) as error :
-            print ("Error while connecting to PostgreSQL", error)
+            self.__cursor = self.__connection.cursor()
+            logger.info(self.__connection.get_dsn_parameters())
+        except (Exception, psycopg2.Error) as e :
+            logger.exception("Error while connecting to PostgreSQL")
 
     def closeDatabaseConnection(self):
-        print("Closing Database Connection")
-        if(self.connection):
-            self.cursor.close()
-            self.connection.close()
+        logger.debug("Closing Database Connection")
+        if(self.__connection):
+            self.__cursor.close()
+            self.__connection.close()
 
     def getData(self, username, query):
-        print("getData Query: ", query, "username:", username)
+        logger.debug("getData Query: %s username: %s", query, username)
         self.createDatabaseConnection()
-        self.cursor.execute("\
+        self.__cursor.execute("\
             SELECT DISTINCT(keyword) from search where username = '{}' and keyword like '%{}%';".format(
                 username, query))
-        record = self.cursor.fetchall()
+        record = self.__cursor.fetchall()
         self.closeDatabaseConnection()
         response = [each[0] for each in record]
-        print("Query Result:", response)
+        logger.debug("Query Result: %s", response)
         return response
 
     def pushData(self, username, data):
-        print("pushData Query:", data, "username:", username)
+        logger.debug("pushData Query:%s username: %s", data, username)
         self.createDatabaseConnection()
-        self.cursor.execute("\
+        self.__cursor.execute("\
             INSERT INTO search (username, keyword) VALUES ('{}', '{}');".format(
                 username, data))
-        self.connection.commit()
+        self.__connection.commit()
+        logger.debug("Entry Saved to database")
         self.closeDatabaseConnection()

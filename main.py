@@ -1,20 +1,22 @@
 import discord
+import Logger
+import logging
 import Configuration
-import Google
 import Database
+import Google
 
+logger = logging.getLogger()
 config = Configuration.Configuration()
-
 google = Google.Google()
-
 db = Database.SQL()
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        print('\nLogged on as', self.user)
+        logger.info('\nLogged on as %s', self.user)
 
     async def on_message(self, message):
-        print("\nRequest:", message.channel, message.author, message.author.name, message.content)
+        logger.debug("\nChannel: %s \nAuthor: %s \nAuthor Name:%s \nMessage:%s",\
+             message.channel, message.author, message.author.name, message.content)
         
         if message.author == self.user:
             return 
@@ -27,6 +29,7 @@ class MyClient(discord.Client):
             response = ""
             if(len(query) >= 2):
                 searchResult = google.search(query[1])
+                logger.debug('\nGoogle Search result %s', searchResult)
                 for i, each in enumerate(searchResult):
                     response += "\n" + str(i + 1) + '. ' + each["title"] + "\n" + each["link"] + "\n"
                 db.pushData(message.author.name, query[1])
@@ -39,6 +42,7 @@ class MyClient(discord.Client):
             response = ""
             if(len(query) >= 2):
                 recentResult = db.getData(message.author.name, query[1])
+                logger.debug('\nRecent Search result %s', recentResult)
                 for i, each in enumerate(recentResult):
                     response += "\n" + str(i + 1) + '. ' + each
             else:
@@ -46,5 +50,5 @@ class MyClient(discord.Client):
             await message.channel.send("\nRecent Quries:" + response)
 
 client = MyClient()
-print("\nBot Started")
+logger.info('\nBot Started')
 client.run(config.getBotToken())
