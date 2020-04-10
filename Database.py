@@ -28,15 +28,24 @@ class SQL:
         if(self.connection):
             self.cursor.close()
             self.connection.close()
-            print("PostgreSQL connection is closed")
 
-    def getData(self, query):
-        print("getData Query: ", query)
+    def getData(self, username, query):
+        print("getData Query: ", query, "username:", username)
         self.createDatabaseConnection()
-        self.cursor.execute("SELECT version();")
-        record = self.cursor.fetchone()
+        self.cursor.execute("\
+            SELECT DISTINCT(keyword) from search where username = '{}' and keyword like '%{}%';".format(
+                username, query))
+        record = self.cursor.fetchall()
         self.closeDatabaseConnection()
-        print("You are connected to - ", record,"\n")
+        response = [each[0] for each in record]
+        print("Query Result:", response)
+        return response
 
-    def pushData(self, data):
-        pass
+    def pushData(self, username, data):
+        print("pushData Query:", data, "username:", username)
+        self.createDatabaseConnection()
+        self.cursor.execute("\
+            INSERT INTO search (username, keyword) VALUES ('{}', '{}');".format(
+                username, data))
+        self.connection.commit()
+        self.closeDatabaseConnection()

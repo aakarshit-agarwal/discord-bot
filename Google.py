@@ -17,7 +17,10 @@ class Google:
         if "items" in result.keys():
             for each in result["items"]:
                 # print(each)
-                top_result.append(each["link"])
+                top_result.append({
+                    "title": each["title"],
+                    "link": each["link"]
+                })
                 if len(top_result) == 5:
                     break
         return top_result

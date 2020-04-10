@@ -15,31 +15,32 @@ class MyClient(discord.Client):
         print('Logged on as', self.user)
 
     async def on_message(self, message):
-        print(message.channel, message.author, message.author.name, message.content)
+        print("\nRequest:", message.channel, message.author, message.author.name, message.content)
         
         if message.author == self.user:
             return 
 
-        if message.content.startswith("hi"):
+        elif message.content.startswith("hi"):
             await message.channel.send('hey')
 
-        if message.content.startswith("!google"):
+        elif message.content.startswith("!google"):
+            query = message.content.split(" ", 1)
+            response = ""
+            if(len(query) >= 2):
+                searchResult = google.search(query[1])
+                for i, each in enumerate(searchResult):
+                    response += "\n" + str(i + 1) + '. ' + each["title"] + "\n" + each["link"] + "\n"
+                db.pushData(message.author.name, query[1])
+            else:
+                response = "Empty query!"
+            await message.channel.send("Result:\n" + response)
+
+        elif message.content.startswith("!recent"):
             query = message.content.split(" ", 1)
             response = "Empty query!"
             if(len(query) >= 2):
-                response = '\n'.join(google.search(query[1]))
-                db.pushData(query[1])
-            await message.channel.send(response)
-
-
-        if message.content.startswith("!recent"):
-            query = message.content.split(" ", 1)
-            response = "Empty query!"
-            if(len(query) >= 2):
-                response = '\n'.join(db.getData(query[1]))
-            await message.channel.send(response)
-
-        await message.channel.send('Wrong query!\nPlease try again.')
+                response = '\n'.join(db.getData(message.author.name, query[1]))
+            await message.channel.send("Recent Quries:\n" + response)
 
 client = MyClient()
 print("Bot Started")
